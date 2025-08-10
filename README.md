@@ -1,7 +1,12 @@
 # K3s DevOps Platform (Homelab → Portfolio)
 
-**Status:** Day 1 complete ✅ — single-node k3s up on Proxmox, demo app deployed and reachable.  
-**Next:** Day 2 – install Longhorn and verify persistent volumes.
+**Status:** Day 3 complete ✅ 
+- k3s single-node on Proxmox
+- Longhorn installed and **default** StorageClass
+- Argo CD up, GitOps app synced
+- Traefik Ingress working at **http://dev.demo.local/**
+
+**Next:** Day 4 – CI runner + pipeline that bumps image tags in the GitOps overlay → Argo auto-deploys.
 
 ---
 
@@ -18,8 +23,10 @@ Build a production-style GitOps platform on k3s that recruiters can grok in 60 s
 - **Node (LAN):** `10.42.1.60`
 - **k3s Pod CIDR:** `10.240.0.0/16`
 - **k3s Service CIDR:** `10.241.0.0/16`
-- **Ingress:** Traefik (installed by k3s, not configured yet)
-- **Demo app:** `nginx` (Deployment + Service)
+- **Ingress Controller:** Traefik (bundled with k3s)
+- **Storage:** Longhorn (**default** StorageClass; replicas=1 for single node)
+- **GitOs:** Argo CD (automated sync + self-heal)
+- **App:** `demo-nginx` (Kustomize base + `dev` overlay, Ingress `dev.demo.local`)
 
 > Note: k3s defaults to `10.42.0.0/16` for Pods, which **conflicted with my LAN (10.42.1.0/24)**. I reinstalled k3s with non-overlapping ranges above. Do this early or routing gets weird.
 
