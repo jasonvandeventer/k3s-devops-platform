@@ -1,0 +1,23 @@
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+#Logs/temp
+*.log
+tmp/
+
+# Secrets / kube / certs
+kubeconfig*
+.kube/
+*.key
+*.crt
+*.pem
+secrets*.yaml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+terraform.tfvars
