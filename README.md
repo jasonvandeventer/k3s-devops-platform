@@ -51,7 +51,9 @@ flowchart LR
   ing -->|Host: dev.demo.local| svc
   k3s --> sc
   sc --> pvc
+```
 
+```mermaid
 sequenceDiagram
   participant Client
   participant Traefik
