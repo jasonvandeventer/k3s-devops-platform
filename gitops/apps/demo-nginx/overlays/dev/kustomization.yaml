@@ -20,3 +20,9 @@ patches:
       kind: Service
       name: demo-nginx
     path: service-port-patch.yaml
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: demo-nginx
+    path: container-port-patch.yaml

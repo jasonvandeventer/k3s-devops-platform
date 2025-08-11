@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-nginx              # base name; kustomize prefixes to dev-demo-nginx
+spec:
+  template:
+    spec:
+      containers:
+      - name: nginx
+        ports:
+        - containerPort: 8080
