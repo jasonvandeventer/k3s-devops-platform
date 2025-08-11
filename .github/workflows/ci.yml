@@ -40,6 +40,7 @@ jobs:
         context: ./app
         file: ./app/Dockerfile
         push: true
+        platforms: linux/amd64
         tags: |
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}
           ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
