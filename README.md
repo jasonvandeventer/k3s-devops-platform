@@ -18,7 +18,7 @@ Build a production-style GitOps platform on k3s that recruiters can grok in 60 s
 
 ---
 
-## Current architecture (Day 1)
+## Current architecture (Day 3)
 
 - **Node (LAN):** `10.42.1.60`
 - **k3s Pod CIDR:** `10.240.0.0/16`
@@ -27,6 +27,32 @@ Build a production-style GitOps platform on k3s that recruiters can grok in 60 s
 - **Storage:** Longhorn (**default** StorageClass; replicas=1 for single node)
 - **GitOs:** Argo CD (automated sync + self-heal)
 - **App:** `demo-nginx` (Kustomize base + `dev` overlay, Ingress `dev.demo.local`)
+
+```mermaid
+flowchart LR
+  dev[Developer laptop] -->|git push| gh[(GitHub repo)]
+  gh -->|Argo watches<br/>gitops/.../overlays/dev| argo[Argo CD<br/>(argocd ns)]
+  argo -->|applies| k3s[(k3s API server)]
+
+  k3s --> deploy[Deployment: dev-demo-nginx]
+  deploy --> pods[Pods: nginx (replicas)]
+  k3s --> svc[Service: dev-demo-nginx:80 (ClusterIP)]
+
+  ing[Traefik Ingress Controller] -->|Host: dev.demo.local| svc
+
+  k3s --> sc[StorageClass: longhorn (default)]
+  sc --> pvc[PVC/PV: Longhorn volume]
+
+sequencDiagram
+  participant Client
+  participant Traefik
+  participant Service
+  participant Pod
+  Client->>Traefik: HTTP GET dev.demo.local/
+  Traefik->>Service: ClusterIP :80
+  Service->>Pod: containerPort :80
+  Pod-->>Client: 200 OK (nginx)
+```
 
 > Note: k3s defaults to `10.42.0.0/16` for Pods, which **conflicted with my LAN (10.42.1.0/24)**. I reinstalled k3s with non-overlapping ranges above. Do this early or routing gets weird.
 

@@ -1,6 +1,7 @@
 # --- Config ---
 KUBECONFIG ?= $(HOME)/.kube/config-k3s-core-1
 ARGOCD_NS  ?= argocd
+HOST ?= dev.demo.local
 
 # --- Helpers ---
 .PHONY: help
@@ -33,3 +34,16 @@ pf-argocd: ## Port-forward Argo CD UI to http://localhost:8080
 .PHONY: pf-longhorn
 pf-longhorn: ## Port-forward Longhorn UI to http://localhost:8081
 	KUBECONFIG=$(KUBECONFIG) kubectl -n longhorn-system port-forward svc/longhorn-frontend 8081:80
+
+# --- Demo: quick ingress check ---
+.PHONY: demo
+demo: ## Curl the ingress host and assert 200 OK (override HOST=... to test others)
+	@echo "→ GET http://$(HOST)/"
+	@http_code=$$(curl -sS -o /tmp/demo.out -w '%{http_code}' http://$(HOST)/); \
+	if [ "$$http_code" = "200" ]; then \
+	  echo "✅ $$http_code OK — ingress routing works"; \
+	  head -n 5 /tmp/demo.out; \
+	else \
+	  echo "❌ HTTP $$http_code — check ingress/service/pods"; \
+	  cat /tmp/demo.out; exit 1; \
+	fi
