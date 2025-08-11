@@ -30,20 +30,29 @@ Build a production-style GitOps platform on k3s that recruiters can grok in 60 s
 
 ```mermaid
 flowchart LR
-  dev[Developer laptop] -->|git push| gh[(GitHub repo)]
-  gh -->|Argo watches<br/>gitops/.../overlays/dev| argo[ArgoCD<br/>(argocd ns)]
-  argo -->|applies| k3s[(k3s API server)]
+  dev["Developer laptop"]
+  gh["GitHub repo"]
+  argo["Argo CD\n(namespace: argocd)\nAuto-Sync"]
+  k3s["k3s cluster\n(10.42.1.60)"]
 
-  k3s --> deploy[Deployment: dev-demo-nginx]
-  deploy --> pods[Pods: nginx (replicas)]
-  k3s --> svc[Service: dev-demo-nginx:80 (ClusterIP)]
+  deploy["Deployment: dev-demo-nginx"]
+  pods["Pods: nginx (replicas)"]
+  svc["Service: dev-demo-nginx:80 (ClusterIP)"]
+  ing["Traefik Ingress"]
+  sc["StorageClass: longhorn (default)"]
+  pvc["PVC/PV (Longhorn)"]
 
-  ing[Traefik Ingress Controller] -->|Host: dev.demo.local| svc
+  dev -->|git push| gh
+  gh -->|Argo watches path\n gitops/.../overlays/dev| argo
+  argo -->|applies| k3s
+  k3s --> deploy
+  deploy --> pods
+  k3s --> svc
+  ing -->|Host: dev.demo.local| svc
+  k3s --> sc
+  sc --> pvc
 
-  k3s --> sc[StorageClass: longhorn (default)]
-  sc --> pvc[PVC/PV: Longhorn volume]
-
-sequencDiagram
+sequenceDiagram
   participant Client
   participant Traefik
   participant Service
