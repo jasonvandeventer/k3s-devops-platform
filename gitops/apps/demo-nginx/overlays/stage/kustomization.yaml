@@ -1,0 +1,23 @@
+resources:
+  - ../../base
+  - ingress.yaml
+
+namePrefix: stage-
+
+labels:
+  - pairs:
+      env: stage
+    includeSelectors: true
+
+images:
+  - name: nginx
+    newName: ghcr.io/jasonvandeventer/demo-app
+    newTag: sha-f251adb
+
+patches:
+  - target:
+      version: v1
+      kind: Service
+      name: demo-nginx
+    path: service-port-patch.yaml
+
