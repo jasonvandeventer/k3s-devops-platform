@@ -12,7 +12,7 @@ labels:
 images:
   - name: nginx
     newName: ghcr.io/jasonvandeventer/demo-app
-    newTag: latest
+    newTag: <TAG>
 
 patches:
   - target:
