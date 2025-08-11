@@ -1,0 +1,59 @@
+name: build-and-deploy
+on:
+  push:
+    paths:
+    - "app/**"
+    - ".github/workflows/ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write # to push tag updates to repo
+  packages: write # to push to GHCR
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/demo-app
+  PATCH_FILE: gitops/apps/demo-nginx/overlays/dev/image-and-port-patch.yaml
+
+jobs:
+  build-push-bump:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Log in to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Compute tag
+      id: vars
+      run: |
+        echo "TAG=sha-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: ./app
+        file: ./app/Dockerfile
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Update overlay image tag
+      run: |
+        OWNER="${{ github.repository_owner }}"
+        TAG="${{ steps.vars.outputs.TAG }}"
+        FILE="${{ env.PATCH_FILE }}"
+        # Replace any existing image line for demo-app with the new tag
+        sed -i -E "s|image:\s*ghcr\.io/.*/demo-app:.*|image: ghcr.io/${OWNER}/demo-app:${TAG}|g" "$FILE"
+        echo "Updated $FILE to tag $TAG"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add "$FILE"
+        git commit -m "ci: deploy demo-app ${TAG} [skip ci]" || echo "No changes to commit"
+        git push

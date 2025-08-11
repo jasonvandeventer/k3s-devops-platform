@@ -43,7 +43,7 @@ flowchart LR
   pvc["PVC/PV (Longhorn)"]
 
   dev -->|git push| gh
-  gh -->|Argo watches path\n gitops/.../overlays/dev| argo
+  gh -->|Argo watches path \n gitops/.../overlays/dev| argo
   argo -->|applies| k3s
   k3s --> deploy
   deploy --> pods

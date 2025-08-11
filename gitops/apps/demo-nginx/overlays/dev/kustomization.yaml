@@ -1,6 +1,11 @@
 resources:
   - ../../base
   - ingress.yaml
+
 namePrefix: dev-
 commonLabels:
   env: dev
+
+patchesStrategicMerge:
+  - image-and-port-patch.yaml
+  - service-port-patch.yaml
