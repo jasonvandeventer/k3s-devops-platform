@@ -3,9 +3,20 @@ resources:
   - ingress.yaml
 
 namePrefix: dev-
-commonLabels:
-  env: dev
 
-patchesStrategicMerge:
-  - image-and-port-patch.yaml
-  - service-port-patch.yaml
+labels:
+  - pairs:
+      env: dev
+
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: demo-nginx
+    path: image-and-port-patch.yaml
+  - target:
+      version: v1
+      kind: Service
+      name: demo-nginx
+    path: service-port-patch.yaml

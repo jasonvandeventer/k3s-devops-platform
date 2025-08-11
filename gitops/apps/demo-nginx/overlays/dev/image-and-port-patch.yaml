@@ -7,6 +7,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: gchr.io/OWNER/demo-app:dev
+        image: ghcr.io/jasonvandeventer/demo-app:latest
         ports:
         - containerPort: 8080
