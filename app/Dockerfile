@@ -1,8 +1,14 @@
 # ---- build ----
 FROM golang:1.22-alpine AS build
 WORKDIR /src
+
+# Cache deps
+COPY go.mod .
+RUN go mod download
+
+# Copy app and build
 COPY . .
-RUN CGO_ENABLED=0 go build -o /out/app ./main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd54 go build -o /out/app .
 
 # ---- run ----
 FROM scratch
