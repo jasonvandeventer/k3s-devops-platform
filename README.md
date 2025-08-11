@@ -31,7 +31,7 @@ Build a production-style GitOps platform on k3s that recruiters can grok in 60 s
 ```mermaid
 flowchart LR
   dev[Developer laptop] -->|git push| gh[(GitHub repo)]
-  gh -->|Argo watches<br/>gitops/.../overlays/dev| argo[Argo CD<br/>(argocd ns)]
+  gh -->|Argo watches<br/>gitops/.../overlays/dev| argo[ArgoCD<br/>(argocd ns)]
   argo -->|applies| k3s[(k3s API server)]
 
   k3s --> deploy[Deployment: dev-demo-nginx]
