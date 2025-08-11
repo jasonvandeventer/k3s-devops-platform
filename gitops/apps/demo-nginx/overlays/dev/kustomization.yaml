@@ -1,19 +1,15 @@
 resources:
   - ../../base
   - ingress.yaml
-
 namePrefix: dev-
-
 labels:
   - pairs:
       env: dev
     includeSelectors: true
-
 images:
   - name: nginx
     newName: ghcr.io/jasonvandeventer/demo-app
-    newTag: <TAG>
-
+    newTag: sha-a15d29c
 patches:
   - target:
       version: v1
