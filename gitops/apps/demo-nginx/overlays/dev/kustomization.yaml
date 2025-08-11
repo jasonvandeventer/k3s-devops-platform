@@ -9,7 +9,7 @@ labels:
 images:
   - name: nginx
     newName: ghcr.io/jasonvandeventer/demo-app
-    newTag: sha-a15d29c
+    newTag: sha-f251adb
 patches:
   - target:
       version: v1
