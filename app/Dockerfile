@@ -2,13 +2,15 @@
 FROM golang:1.22-alpine AS build
 WORKDIR /src
 
-# Cache deps
-COPY go.mod .
+# modules
+COPY go.mod ./
 RUN go mod download
 
-# Copy app and build
-COPY . .
-RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /out/app .
+# source
+COPY main.go ./
+
+# build (let the runner’s arch drive it; no ldflags, no cross-compile)
+RUN CGO_ENABLED=0 go build -o /out/app ./main.go
 
 # ---- run ----
 FROM scratch
