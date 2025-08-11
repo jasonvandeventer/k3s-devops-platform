@@ -8,13 +8,12 @@ labels:
   - pairs:
       env: dev
 
+images:
+  - name: nginx
+    newName: ghcr.io/jasonvandeventer/demo-app
+    newTag: latest
+
 patches:
-  - target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: demo-nginx
-    path: image-and-port-patch.yaml
   - target:
       version: v1
       kind: Service
